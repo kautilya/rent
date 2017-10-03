@@ -1,0 +1,14 @@
+{
+  "interest" : 3.00,
+  "months" : 360,
+  "value" : 600000.0,
+  "down" : 120000.0,
+  "rent" : 3000.0,
+  "insurance" : 100,
+  "taxrate" : 1.27,
+  "hoa" : 350.0,
+  "expense" : 100.0,
+  "rent-increase-percent" : 2.0,
+  "tax-increase-percent" : 2.0,
+  "idle-months" : 1
+}

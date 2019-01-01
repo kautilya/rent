@@ -94,6 +94,7 @@ class Mortgage:
         self._tax_increase_percent = decimal.Decimal(tax_increase_percent)
         self._tax = self._value * (self._taxrate / 100)
         self._next_tax = 0.0
+        self._next_down = self._down
 
     def rate(self):
         return self._interest
@@ -118,6 +119,10 @@ class Mortgage:
 
     def down(self):
         return self._down
+
+    def next_down(self, principle):
+        self._next_down = self._next_down + principle;
+        return self._next_down
 
     def taxrate(self):
         return self._taxrate
@@ -175,9 +180,10 @@ def print_detail(m, r):
     yinterest = 0
     yprinciple = 0
     cmonth = 0
+    cyear = 1
 
     print('{0:>25s}:'.format('Yearly Schedule'))
-    print('{0:>12s} {1:>12s} {2:>12s} {3:>12s} {4:>12s} {5:>12s} {6:>12s}'.format('Interest', 'Principle', 'Expense', 'Rent', 'Profit', 'Porf Pct', 'Cash Flow'))
+    print('{0:>12s} {1:>12s} {2:>12s} {3:>12s} {4:>12s} {5:>12s} {6:>12s} {7:>12s}'.format('Year', 'Interest', 'Principle', 'Expense', 'Rent', 'Profit', 'Porf Pct', 'Cash Flow'))
     for principle, interest in m.monthly_payment_schedule():
         yinterest = yinterest + interest
         yprinciple = yprinciple + principle
@@ -189,11 +195,21 @@ def print_detail(m, r):
                       + (r.next_insurance() * MONTHS_IN_YEAR) + yinterest)
             rent = r.annual_rent() 
             profit = rent - expense
-            profit_percent = (profit / m.down()) * 100
+            profit_percent = (profit / m.next_down(yprinciple)) * 100
             cash_flow = rent - expense - yprinciple
-            print('{0:>12.2f}  {1:>12.2f} {2:>12.2f} {3:>12.2f} {4:>12.2f} {5:>12.2f} {6:>12.2f}'.format(yinterest, yprinciple, expense, rent, profit, profit_percent, cash_flow));
+            print('{0:>12d} {1:>12.2f}  {2:>12.2f} {3:>12.2f} {4:>12.2f} {5:>12.2f} {6:>12.2f} {7:>12.2f}'.format(cyear, yinterest, yprinciple, expense, rent, profit, profit_percent, cash_flow));
             yinterest = 0
             yprinciple = 0
+            cyear = cyear + 1
+
+    expense = (m.next_tax() + (r.next_expense() * MONTHS_IN_YEAR) + 
+            (r.next_hoa() * MONTHS_IN_YEAR) 
+            + (r.next_insurance() * MONTHS_IN_YEAR))
+    rent = r.annual_rent()
+    profit = rent - expense
+    profit_percent = (profit / m.next_down(yprinciple)) * 100
+    cash_flow = rent - expense - yprinciple
+    print('{0:>12d} {1:>12.2f}  {2:>12.2f} {3:>12.2f} {4:>12.2f} {5:>12.2f} {6:>12.2f} {7:>12.2f}'.format(cyear, 0, 0, expense, rent, profit, profit_percent, cash_flow));
 
 def main():
     parser = argparse.ArgumentParser(description='Mortgage Amortization Tools')

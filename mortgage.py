@@ -331,10 +331,10 @@ class Config:
         return current
 
 def print_parameters(m, r):
-    print('{0:>12s} {1:>12s} {2:>12s} {3:>12s} {4:>12s} {5:>12s} {6:>12s}'.format('Interest', 'months', 'loan', 'value', 'down', 'tax', 'tax inc'))
-    print('{0:>12.2f} {1:>12.0f} {2:>12.2f} {3:>12.2f} {4:>12.2f} {5:>12.2f} {6:>12.0f}'.\
+    print('{0:>12s} {1:>12s} {2:>12s} {3:>12s} {4:>12s} {5:>12s} {6:>12s}'.format('Interest', 'months', 'loan', 'value', 'down', 'tax', 'tax inc %/y'))
+    print('{0:>12.3f} {1:>12.0f} {2:>12.2f} {3:>12.2f} {4:>12.2f} {5:>12.2f}% {6:>12.0f}'.\
             format(m.rate() * decimal.Decimal(100), m.loan_months(), m.loan(), m.value(), m.down(), m.taxrate(), m.tax_increase_percent()))
-    print('{0:>12s} {1:>12s} {2:>12s} {3:>12s} {4:>12s} {5:>12s} {6:>12s}'.format('value inc', 'rent', 'insurance', 'expense', 'hoa', 'rent inc', 'idle months'))
+    print('{0:>12s} {1:>12s} {2:>12s} {3:>12s} {4:>12s} {5:>12s} {6:>12s}'.format('value inc %/y', 'rent/m', 'insurance/m', 'expense/m', 'hoa/m', 'rent inc %/y', 'idle months/y'))
     print('{0:>12.0f} {1:>12.2f} {2:>12.2f} {3:>12.2f} {4:>12.2f} {5:>12.0f} {6:>12.2f}'.\
             format(m.appreciation_percent(), r.rent(), r.insurance(), r.expense(), r.hoa(), r.rent_increase_percent(), r.idle_months()))
 

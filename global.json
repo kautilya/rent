@@ -1,0 +1,8 @@
+{
+  "interest" : 5.00,
+  "months" : 360,
+  "rent-increase-percent" : 2.0,
+  "tax-increase-percent" : 2.0,
+  "idle-months" : 1,
+  "appreciation-percent" : 2.0
+}

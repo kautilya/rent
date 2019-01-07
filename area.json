@@ -1,0 +1,7 @@
+{
+  "insurance" : 100,
+  "taxrate" : 1.27,
+  "expense" : 100.0,
+  "idle-months" : 1,
+  "rent-per-sq-feet" : 1.0
+}

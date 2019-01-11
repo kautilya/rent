@@ -105,6 +105,7 @@ class Mortgage:
         self._tax = decimal.Decimal(0.0)
         self._next_tax = decimal.Decimal(0.0)
         self._next_down = self._down
+        self._next_real_down = self._down
         self._next_value = self._value
         self._equity = decimal.Decimal(0.0)
 
@@ -126,6 +127,7 @@ class Mortgage:
         self._tax = self._value * (self._taxrate / decimal.Decimal(100.0))
         self._next_tax = self._tax
         self._next_down = self._down
+        self._next_real_down = self._down
         self._next_value = self._value
 
     def rate(self):
@@ -151,6 +153,7 @@ class Mortgage:
 
     def update_next(self, balance, principle):
         self._next_down = self._next_down + principle;
+        self._next_real_down = inflate(self._next_real_down, INFLATION) + principle
         self._next_value = inflate(self._next_value, self._appreciation_percent)
         self._next_tax = inflate(self._next_tax, self._tax_increase_percent)
         self._equity = self._next_value - balance
@@ -163,6 +166,9 @@ class Mortgage:
 
     def next_down(self):
         return self._next_down
+
+    def next_real_down(self):
+        return self._next_real_down
 
     def equity(self):
         return self._equity
@@ -358,7 +364,7 @@ def print_detail(m, r):
     first = False
 
     print('{0:>40s}:'.format('Yearly Schedule'))
-    print('{0:>12s} {1:>12s} {2:>12s} {3:>12s} {4:>12s} {5:>12s} {6:>12s} {7:>12s} {8:>12s} {9:>12s}'.format('Year', 'Interest', 'Principle', 'Expense', 'Rent', 'Profit', 'Porf Pct', 'Cash Flow', 'ProfitWEq', 'PWEq Pct'))
+    print('{0:>12s} {1:>12s} {2:>12s} {3:>12s} {4:>12s} {5:>12s} {6:>12s} {7:>12s} {8:>12s} {9:>12s} {10:>12s}'.format('Year', 'Interest', 'Principle', 'Expense', 'Rent', 'Profit', 'Porf Pct', 'Cash Flow', 'ProfitWEq', 'PWEq Pct', 'PWREq Pct'))
     for balance, principle, interest in m.monthly_payment_schedule():
         yinterest = yinterest + interest
         yprinciple = yprinciple + principle
@@ -379,7 +385,8 @@ def print_detail(m, r):
             yequity = m.equity()
             profit_with_equity = profit + (yequity - lequity)
             profit_with_equity_percent = (profit_with_equity / m.next_down()) * 100
-            print('{0:>12d} {1:>12.2f}  {2:>12.2f} {3:>12.2f} {4:>12.2f} {5:>12.2f} {6:>12.2f} {7:>12.2f} {8:>12.2f} {9:>12.2f}'.format(cyear, yinterest, yprinciple, expense, rent, profit, profit_percent, cash_flow, profit_with_equity, profit_with_equity_percent));
+            profit_with_real_equity_percent = (profit_with_equity / m.next_real_down()) * 100
+            print('{0:>12d} {1:>12.2f}  {2:>12.2f} {3:>12.2f} {4:>12.2f} {5:>12.2f} {6:>12.2f} {7:>12.2f} {8:>12.2f} {9:>12.2f} {10:>12.2f}'.format(cyear, yinterest, yprinciple, expense, rent, profit, profit_percent, cash_flow, profit_with_equity, profit_with_equity_percent, profit_with_real_equity_percent));
             yinterest = 0
             yprinciple = 0
             cyear = cyear + 1
@@ -397,7 +404,8 @@ def print_detail(m, r):
     yequity = m.equity()
     profit_with_equity = profit + (yequity - lequity)
     profit_with_equity_percent = (profit_with_equity / m.next_down()) * 100
-    print('{0:>12d} {1:>12.2f}  {2:>12.2f} {3:>12.2f} {4:>12.2f} {5:>12.2f} {6:>12.2f} {7:>12.2f} {8:>12.2f} {9:>12.2f}'.format(cyear, 0, 0, expense, rent, profit, profit_percent, cash_flow, profit_with_equity, profit_with_equity_percent));
+    profit_with_real_equity_percent = (profit_with_equity / m.next_real_down()) * 100
+    print('{0:>12d} {1:>12.2f}  {2:>12.2f} {3:>12.2f} {4:>12.2f} {5:>12.2f} {6:>12.2f} {7:>12.2f} {8:>12.2f} {9:>12.2f} {10:>12.2f}'.format(cyear, 0, 0, expense, rent, profit, profit_percent, cash_flow, profit_with_equity, profit_with_equity_percent,profit_with_real_equity_percent));
 
 def main():
     parser = argparse.ArgumentParser(description='Mortgage Amortization Tools')
